@@ -15,6 +15,7 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/earning_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/add_tv_left_bg"
@@ -22,9 +23,11 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingTop="5dp"
-            android:text="收入" />
+            android:text="收入"
+            android:textColor="@android:color/black"/>
 
         <TextView
+            android:id="@+id/expense_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/add_tv_right_bg"
@@ -32,8 +35,15 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:paddingTop="5dp"
-            android:text="支出" />
+            android:text="支出"
+            android:textColor="@android:color/black"/>
 
     </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/add_vp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </android.support.v4.view.ViewPager>
 
 </LinearLayout>
