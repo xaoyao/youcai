@@ -25,6 +25,14 @@ public class YouCaiDatabaseHelper extends SQLiteOpenHelper {
             "type_id integer primary key autoincrement," +
             "type_name text," +
             "type_icon integer)";
+    private static final String CREATE_MONEY="create table money(" +
+            "money_id integer primary key autoincrement," +
+            "user_id integer," +
+            "money_type integer," +
+            "type_id integer," +
+            "money real," +
+            "date datetime," +
+            "other text)";
 
     public YouCaiDatabaseHelper(Context context) {
         super(context, "YouCai.db", null, 1);
@@ -35,6 +43,7 @@ public class YouCaiDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_USER);
         db.execSQL(CREATE_EARNING_TYPE);
         db.execSQL(CREATE_EXPENSE_TYPE);
+        db.execSQL(CREATE_MONEY);
 
         initEarningType(db);
         initExpenseType(db);

@@ -3,6 +3,7 @@ package com.liu.youcai.ui.fragment;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -10,15 +11,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.liu.youcai.MyApplication;
 import com.liu.youcai.R;
+import com.liu.youcai.adapter.TypeGridViewAdapter;
+import com.liu.youcai.bean.Money;
 import com.liu.youcai.bean.Type;
+import com.liu.youcai.db.dao.MoneyDao;
 import com.liu.youcai.db.dao.TypeDao;
+import com.liu.youcai.ui.YouCaiActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -31,8 +41,22 @@ import java.util.List;
 public class EarninFragment extends Fragment {
     private Button mChoseTime;
     private View view;
+
     private ImageView mEarningTypeIcon;
+    private TextView mEarningTypeName;
+    private EditText mEtMoney;
+    private EditText mEtOther;
+    private Button mSave;
+
     private GridView mGridView;
+
+    private List<Type> types;
+    private Type type;
+
+    private Money money;
+
+    private String date;
+
 
 
     public EarninFragment() {
@@ -46,18 +70,37 @@ public class EarninFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_earnin, container, false);
 
+        type=new TypeDao(getContext()).findEarningTypeByName("工资");
+
         mEarningTypeIcon= (ImageView) view.findViewById(R.id.earning_type_icon);
+        mEarningTypeName= (TextView) view.findViewById(R.id.earning_type_text);
+        mEtMoney= (EditText) view.findViewById(R.id.money);
+        mEtOther= (EditText) view.findViewById(R.id.other);
+
+        mSave= (Button) view.findViewById(R.id.sava);
+
+        mGridView= (GridView) view.findViewById(R.id.grid_view);
+        initGridView();
+
 
         mChoseTime= (Button) view.findViewById(R.id.chose_time);
-        Date date=new Date();
+        Date time=new Date();
         SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String t=format.format(date);
-        mChoseTime.setText(t);
+        date=format.format(time);
+        mChoseTime.setText(date);
         mChoseTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 choseTime();
             }
+        });
+
+        mSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveMoney();
+            }
+
         });
 
 
@@ -102,20 +145,58 @@ public class EarninFragment extends Fragment {
 ////                        timePicker.getCurrentHour()
 ////                        ,timePicker.getCurrentMinute()));
 
-                String time=String.format("%d-%02d-%02d %02d:%02d",
+                date=String.format("%d-%02d-%02d %02d:%02d",
                         datePicker.getYear(),
                         datePicker.getMonth(),
                         datePicker.getDayOfMonth(),
                         timePicker.getCurrentHour(),
                         timePicker.getCurrentMinute());
 
-                mChoseTime.setText(time);
+                mChoseTime.setText(date);
                 dialog.cancel();
             }
         });
 
         Dialog dialog=builder.create();
         dialog.show();
+    }
+
+    /**
+     * types
+     */
+    private void initGridView(){
+
+        types=new TypeDao(getContext()).findAllEarningType();
+        TypeGridViewAdapter adapter=new TypeGridViewAdapter(getContext(),R.layout.type_item,types);
+        mGridView.setAdapter(adapter);
+
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                type=types.get(position);
+                mEarningTypeIcon.setBackgroundResource(type.getIcon());
+                mEarningTypeName.setText(type.getName());
+            }
+        });
+
+    }
+
+    private void saveMoney() {
+        money=new Money();
+        money.setUserId(((MyApplication)getActivity().getApplication()).getUser().getId());
+        money.setMoneyType(Money.EARNING);
+        money.setType(type);
+
+        double m=Double.parseDouble(mEtMoney.getText().toString());
+        money.setMoney(m);
+        money.setDate(date);
+        money.setOther(mEtOther.getText().toString());
+        if(new MoneyDao(getContext()).addMoney(money)){
+            startActivity(new Intent(getContext(), YouCaiActivity.class));
+            getActivity().finish();
+        }else {
+            Toast.makeText(getContext(),"保存失败",Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

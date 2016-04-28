@@ -27,7 +27,7 @@
         </activity>
         <activity
             android:name=".ui.AddActivity"
-            android:parentActivityName=".ui.YouCaiActivity" />
+            android:parentActivityName=".ui.YouCaiActivity"/>
         <activity
             android:name=".ui.UserSettingActivity"
             android:parentActivityName=".ui.YouCaiActivity" />

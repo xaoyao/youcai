@@ -20,10 +20,17 @@ import android.widget.Toast;
 import com.liu.youcai.ActivityCollector;
 import com.liu.youcai.MyApplication;
 import com.liu.youcai.R;
+import com.liu.youcai.bean.Money;
+import com.liu.youcai.db.dao.MoneyDao;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 public class YouCaiActivity extends AppCompatActivity {
     private Button btnAdd;
     private DrawerLayout mDrawerLayout;
+    private TextView todayExpense;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +38,10 @@ public class YouCaiActivity extends AppCompatActivity {
         setContentView(R.layout.activity_you_cai);
         ActivityCollector.addActivity(this);
         setTranslucent();
+
         initDrawerLayout();
 
-
+        todayExpense= (TextView) findViewById(R.id.today_expense);
 
 
         btnAdd= (Button) findViewById(R.id.btn_add);
@@ -45,6 +53,12 @@ public class YouCaiActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateTodayExpense();
     }
 
     @Override
@@ -102,6 +116,21 @@ public class YouCaiActivity extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
         }
+    }
+
+    /**
+     * 更新显示今日支出
+     */
+    private void updateTodayExpense(){
+        Date date =new Date();
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+        String time=format.format(date);
+        List<Money> todayMoneys=new MoneyDao(YouCaiActivity.this).findExpenseMoneyByTime(time);
+        Double sum=0.00;
+        for(Money m:todayMoneys){
+            sum+=m.getMoney();
+        }
+        todayExpense.setText(todayMoneys.size()+"笔 "+sum);
     }
 
 
