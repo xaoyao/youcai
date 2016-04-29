@@ -27,13 +27,16 @@
         </activity>
         <activity
             android:name=".ui.AddActivity"
-            android:parentActivityName=".ui.YouCaiActivity"/>
+            android:parentActivityName=".ui.YouCaiActivity" />
         <activity
             android:name=".ui.UserSettingActivity"
             android:parentActivityName=".ui.YouCaiActivity" />
         <activity android:name=".ui.RegisterActivity" />
-        <activity android:name=".ui.ChangePasswordActivity"
-            android:parentActivityName=".ui.UserSettingActivity"></activity>
+        <activity
+            android:name=".ui.ChangePasswordActivity"
+            android:parentActivityName=".ui.UserSettingActivity" />
+        <activity android:name=".ui.DetailActivity"
+            android:parentActivityName=".ui.YouCaiActivity"></activity>
     </application>
 
 </manifest>

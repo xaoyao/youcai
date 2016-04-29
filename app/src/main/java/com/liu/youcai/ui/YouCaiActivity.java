@@ -32,6 +32,9 @@ public class YouCaiActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private TextView todayExpense;
 
+    private LinearLayout mToDetail;
+    private LinearLayout mTodayToDetail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +45,8 @@ public class YouCaiActivity extends AppCompatActivity {
         initDrawerLayout();
 
         todayExpense= (TextView) findViewById(R.id.today_expense);
+        mToDetail= (LinearLayout) findViewById(R.id.to_detail);
+        mTodayToDetail= (LinearLayout) findViewById(R.id.today_to_detail);
 
 
         btnAdd= (Button) findViewById(R.id.btn_add);
@@ -49,6 +54,19 @@ public class YouCaiActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(YouCaiActivity.this,AddActivity.class));
+            }
+        });
+
+        mToDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(YouCaiActivity.this,DetailActivity.class));
+            }
+        });
+        mTodayToDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(YouCaiActivity.this,DetailActivity.class));
             }
         });
 

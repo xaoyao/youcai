@@ -1,5 +1,6 @@
 package com.liu.youcai.ui;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.liu.youcai.ActivityCollector;
 import com.liu.youcai.R;
 import com.liu.youcai.adapter.AddViewPagerAdapter;
+import com.liu.youcai.bean.Money;
 import com.liu.youcai.ui.fragment.EarninFragment;
 import com.liu.youcai.ui.fragment.ExpenseFragment;
 
@@ -20,6 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AddActivity extends AppCompatActivity {
+
+    public static final String MODE="mode";
+    public  static final int MODE_EDIT=1;
+    public static final int MODE_ADD=0;
 
     private Toolbar mToolbar;
 
@@ -30,17 +36,27 @@ public class AddActivity extends AppCompatActivity {
     private TextView mExpenseTextView;
     private AddViewPagerAdapter mPagerAdapter;
 
+    //编辑模式需要的变量
+    private int modeCode;
+    private Intent i;
+    private Money money;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //防止输入框被键盘覆盖
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         setContentView(R.layout.activity_add);
         ActivityCollector.addActivity(this);
 
+
+        i=getIntent();
+        modeCode=i.getIntExtra(MODE,MODE_ADD);
+
+
         initToolBar();
+
 
         initAddFragments();
 
@@ -49,6 +65,14 @@ public class AddActivity extends AppCompatActivity {
         mEarningTextView= (TextView) findViewById(R.id.earning_tv);
         mExpenseTextView= (TextView) findViewById(R.id.expense_tv);
         changeTextColor();
+
+        if(modeCode==MODE_EDIT){
+            if(money.getMoneyType()==Money.EARNING){
+                mAddViewPager.setCurrentItem(0);
+            }else {
+                mAddViewPager.setCurrentItem(1);
+            }
+        }
 
         mEarningTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,11 +101,24 @@ public class AddActivity extends AppCompatActivity {
      * 初始化要显示的fragment
      */
     private void  initAddFragments(){
-        mAddFragments=new ArrayList<>();
         EarninFragment earninFragment=new EarninFragment();
         ExpenseFragment expenseFragment=new ExpenseFragment();
+
+        if(modeCode==MODE_EDIT){
+            money = (Money) i.getSerializableExtra("money");
+            Bundle bundle=new Bundle();
+            bundle.putSerializable("money", money);
+            if(money.getMoneyType()==Money.EARNING){
+                earninFragment.setArguments(bundle);
+            }else {
+                expenseFragment.setArguments(bundle);
+            }
+        }
+
+        mAddFragments=new ArrayList<>();
         mAddFragments.add(earninFragment);
         mAddFragments.add(expenseFragment);
+
     }
 
     /**

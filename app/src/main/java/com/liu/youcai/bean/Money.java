@@ -1,9 +1,11 @@
 package com.liu.youcai.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by liu on 2016/4/28 0028.
  */
-public class Money {
+public class Money implements Serializable{
 
     public static final int EARNING=0;
     public static final int EXPENSE=1;

@@ -28,6 +28,7 @@ import com.liu.youcai.bean.Money;
 import com.liu.youcai.bean.Type;
 import com.liu.youcai.db.dao.MoneyDao;
 import com.liu.youcai.db.dao.TypeDao;
+import com.liu.youcai.ui.AddActivity;
 import com.liu.youcai.ui.YouCaiActivity;
 
 import java.text.SimpleDateFormat;
@@ -56,6 +57,7 @@ public class EarninFragment extends Fragment {
     private Money money;
 
     private String date;
+    private double moneyNumber;
 
 
 
@@ -70,23 +72,23 @@ public class EarninFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_earnin, container, false);
 
-        type=new TypeDao(getContext()).findEarningTypeByName("工资");
 
-        mEarningTypeIcon= (ImageView) view.findViewById(R.id.earning_type_icon);
-        mEarningTypeName= (TextView) view.findViewById(R.id.earning_type_text);
-        mEtMoney= (EditText) view.findViewById(R.id.money);
-        mEtOther= (EditText) view.findViewById(R.id.other);
+        mEarningTypeIcon = (ImageView) view.findViewById(R.id.earning_type_icon);
+        mEarningTypeName = (TextView) view.findViewById(R.id.earning_type_text);
+        mEtMoney = (EditText) view.findViewById(R.id.money);
+        mEtOther = (EditText) view.findViewById(R.id.other);
 
-        mSave= (Button) view.findViewById(R.id.sava);
+        mSave = (Button) view.findViewById(R.id.sava);
 
-        mGridView= (GridView) view.findViewById(R.id.grid_view);
+        mChoseTime = (Button) view.findViewById(R.id.chose_time);
+
+        mGridView = (GridView) view.findViewById(R.id.grid_view);
+
+        initData();
         initGridView();
 
 
-        mChoseTime= (Button) view.findViewById(R.id.chose_time);
-        Date time=new Date();
-        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        date=format.format(time);
+        mEtMoney.setText(moneyNumber + "");
         mChoseTime.setText(date);
         mChoseTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,17 +110,16 @@ public class EarninFragment extends Fragment {
     }
 
 
-
     /**
      * 选择时间
      */
-    private void choseTime(){
+    private void choseTime() {
 
-        AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
-        View dialogView=View.inflate(getContext(),R.layout.date_time_dialog,null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View dialogView = View.inflate(getContext(), R.layout.date_time_dialog, null);
 
-        final DatePicker datePicker= (DatePicker) dialogView.findViewById(R.id.date_picker);
-        final TimePicker timePicker= (TimePicker) dialogView.findViewById(R.id.time_picker);
+        final DatePicker datePicker = (DatePicker) dialogView.findViewById(R.id.date_picker);
+        final TimePicker timePicker = (TimePicker) dialogView.findViewById(R.id.time_picker);
 
         timePicker.setIs24HourView(true);
 
@@ -145,9 +146,9 @@ public class EarninFragment extends Fragment {
 ////                        timePicker.getCurrentHour()
 ////                        ,timePicker.getCurrentMinute()));
 
-                date=String.format("%d-%02d-%02d %02d:%02d",
+                date = String.format("%d-%02d-%02d %02d:%02d",
                         datePicker.getYear(),
-                        datePicker.getMonth(),
+                        datePicker.getMonth() + 1,
                         datePicker.getDayOfMonth(),
                         timePicker.getCurrentHour(),
                         timePicker.getCurrentMinute());
@@ -157,23 +158,23 @@ public class EarninFragment extends Fragment {
             }
         });
 
-        Dialog dialog=builder.create();
+        Dialog dialog = builder.create();
         dialog.show();
     }
 
     /**
      * types
      */
-    private void initGridView(){
+    private void initGridView() {
 
-        types=new TypeDao(getContext()).findAllEarningType();
-        TypeGridViewAdapter adapter=new TypeGridViewAdapter(getContext(),R.layout.type_item,types);
+        types = new TypeDao(getContext()).findAllEarningType();
+        TypeGridViewAdapter adapter = new TypeGridViewAdapter(getContext(), R.layout.type_item, types);
         mGridView.setAdapter(adapter);
 
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                type=types.get(position);
+                type = types.get(position);
                 mEarningTypeIcon.setBackgroundResource(type.getIcon());
                 mEarningTypeName.setText(type.getName());
             }
@@ -182,21 +183,64 @@ public class EarninFragment extends Fragment {
     }
 
     private void saveMoney() {
-        money=new Money();
-        money.setUserId(((MyApplication)getActivity().getApplication()).getUser().getId());
-        money.setMoneyType(Money.EARNING);
-        money.setType(type);
 
-        double m=Double.parseDouble(mEtMoney.getText().toString());
-        money.setMoney(m);
-        money.setDate(date);
-        money.setOther(mEtOther.getText().toString());
-        if(new MoneyDao(getContext()).addMoney(money)){
-            startActivity(new Intent(getContext(), YouCaiActivity.class));
-            getActivity().finish();
-        }else {
-            Toast.makeText(getContext(),"保存失败",Toast.LENGTH_SHORT).show();
+        //编辑模式
+        if (money != null) {
+
+            money.setType(type);
+            double m = Double.parseDouble(mEtMoney.getText().toString());
+            money.setMoney(m);
+            money.setDate(date);
+            money.setOther(mEtOther.getText().toString());
+
+            if (new MoneyDao(getContext()).update(money)) {
+                getActivity().finish();
+            } else {
+                Toast.makeText(getContext(), "编辑失败", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            //添加模式
+            money = new Money();
+            money.setUserId(((MyApplication) getActivity().getApplication()).getUser().getId());
+            money.setMoneyType(Money.EARNING);
+            money.setType(type);
+
+            double m = Double.parseDouble(mEtMoney.getText().toString());
+            money.setMoney(m);
+            money.setDate(date);
+            money.setOther(mEtOther.getText().toString());
+            if (new MoneyDao(getContext()).addMoney(money)) {
+                startActivity(new Intent(getContext(), YouCaiActivity.class));
+                getActivity().finish();
+            } else {
+                Toast.makeText(getContext(), "保存失败", Toast.LENGTH_SHORT).show();
+            }
         }
+    }
+
+    private void initData() {
+
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            money= (Money) bundle.getSerializable("money");
+            type=money.getType();
+            date=money.getDate().substring(0,16);
+            moneyNumber=money.getMoney();
+
+            //更新图标
+            mEarningTypeIcon.setBackgroundResource(type.getIcon());
+            mEarningTypeName.setText(type.getName());
+
+        } else {
+            type = new TypeDao(getContext()).findEarningTypeByName("工资");
+            Date time = new Date();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            date = format.format(time);
+            moneyNumber = 0;
+            money=null;
+        }
+
+
     }
 
 }

@@ -61,7 +61,7 @@ public class MoneyDao {
 
         db=dbHelper.getWritableDatabase();
 
-        Cursor cursor=db.rawQuery("select * from money",new String[]{});
+        Cursor cursor=db.rawQuery("select * from money order by date desc",new String[]{});
 
         if(cursor.moveToFirst()){
             do{
@@ -80,6 +80,7 @@ public class MoneyDao {
 
             }while (cursor.moveToNext());
         }
+        db.close();
 
         return moneys;
     }
@@ -115,6 +116,7 @@ public class MoneyDao {
 
             }while (cursor.moveToNext());
         }
+        db.close();
 
         return moneys;
 
@@ -152,6 +154,7 @@ public class MoneyDao {
 
             }while (cursor.moveToNext());
         }
+        db.close();
 
         return moneys;
 
@@ -188,9 +191,38 @@ public class MoneyDao {
 
             }while (cursor.moveToNext());
         }
+        db.close();
 
         return moneys;
 
+    }
+
+
+    public boolean deleteById(int id){
+
+        db=dbHelper.getWritableDatabase();
+        int code=db.delete("money","money_id=?",new String[]{id+""});
+        if(code==0){
+            return false;
+        }
+        db.close();
+        return true;
+    }
+
+    public boolean update(Money money){
+        db=dbHelper.getWritableDatabase();
+        ContentValues values=new ContentValues();
+        values.put("type_id",money.getType().getId());
+        values.put("money",money.getMoney());
+        values.put("date",money.getDate());
+        values.put("other",money.getOther());
+        int code=db.update("money",values,"money_id=?",new String[]{money.getId()+""});
+        db.close();
+
+        if(code<1){
+            return false;
+        }
+        return true;
     }
 
 

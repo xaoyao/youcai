@@ -1,9 +1,11 @@
 package com.liu.youcai.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by liu on 2016/4/25 0025.
  */
-public class Type {
+public class Type implements Serializable{
     private int id;
     private String name;
     private int icon;
