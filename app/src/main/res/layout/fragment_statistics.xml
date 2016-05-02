@@ -1,0 +1,80 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.liu.youcai.ui.fragment.StatisticsFragment"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/left_iv"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/zuojiantou_baobiao"/>
+        <TextView
+            android:id="@+id/statistics_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2016-05"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"/>
+        <ImageView
+            android:id="@+id/right_iv"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/youjiantou_baobiao"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="总计"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/statistics_money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00"
+            android:textSize="25sp"
+            android:textColor="@android:color/black"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/statistics_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ListView>
+
+    <RelativeLayout
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/empty_img"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/kongbaobiao"
+            android:layout_centerInParent="true"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="无记录"
+            android:layout_below="@id/empty_img"
+            android:layout_centerHorizontal="true"
+            android:textSize="30sp"
+            android:textColor="@android:color/black"/>
+    </RelativeLayout>
+
+
+
+</LinearLayout>

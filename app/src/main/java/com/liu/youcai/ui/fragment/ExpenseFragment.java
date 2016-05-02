@@ -210,6 +210,8 @@ public class ExpenseFragment extends Fragment {
             mExpenseTypeIcon.setBackgroundResource(type.getIcon());
             mExpenseTypeName.setText(type.getName());
 
+            mEtOther.setText(money.getOther());
+
         } else {
 
             type = new TypeDao(getContext()).findEarningTypeByName("工资");

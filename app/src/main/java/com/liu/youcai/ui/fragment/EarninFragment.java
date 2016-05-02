@@ -227,9 +227,12 @@ public class EarninFragment extends Fragment {
             date=money.getDate().substring(0,16);
             moneyNumber=money.getMoney();
 
+
             //更新图标
             mEarningTypeIcon.setBackgroundResource(type.getIcon());
             mEarningTypeName.setText(type.getName());
+
+            mEtOther.setText(money.getOther());
 
         } else {
             type = new TypeDao(getContext()).findEarningTypeByName("工资");

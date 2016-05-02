@@ -35,7 +35,10 @@
         <activity
             android:name=".ui.ChangePasswordActivity"
             android:parentActivityName=".ui.UserSettingActivity" />
-        <activity android:name=".ui.DetailActivity"
+        <activity
+            android:name=".ui.DetailActivity"
+            android:parentActivityName=".ui.YouCaiActivity" />
+        <activity android:name=".ui.StatisticsActivity"
             android:parentActivityName=".ui.YouCaiActivity"></activity>
     </application>
 

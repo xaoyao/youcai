@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.liu.youcai.bean.Money;
+import com.liu.youcai.bean.Statistics;
 import com.liu.youcai.bean.Type;
 import com.liu.youcai.db.YouCaiDatabaseHelper;
 
@@ -198,6 +199,11 @@ public class MoneyDao {
     }
 
 
+    /**
+     * 通过id删除记录
+     * @param id
+     * @return
+     */
     public boolean deleteById(int id){
 
         db=dbHelper.getWritableDatabase();
@@ -209,6 +215,11 @@ public class MoneyDao {
         return true;
     }
 
+    /**
+     * 修改记录
+     * @param money
+     * @return
+     */
     public boolean update(Money money){
         db=dbHelper.getWritableDatabase();
         ContentValues values=new ContentValues();
@@ -223,6 +234,32 @@ public class MoneyDao {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 查询每月的收支统计
+     * @return
+     */
+    public List<Statistics> statisticsByMonth(int moneyType , String time){
+        List<Statistics> statisticses=new ArrayList<>();
+        db=dbHelper.getWritableDatabase();
+        Cursor cursor=db.rawQuery("select type_id , sum(money) from money where date like ? and money_type=? group by type_id",
+                new String[]{time+"%",moneyType+""});
+        if(cursor.moveToFirst()){
+            do{
+                int typeId=cursor.getInt(cursor.getColumnIndex("type_id"));
+                double sum=cursor.getDouble(cursor.getColumnIndex("sum(money)"));
+
+                Type type=new TypeDao(context).findTypeById(moneyType,typeId);
+
+                Statistics statistics=new Statistics(type,sum);
+                statisticses.add(statistics);
+
+            }while (cursor.moveToNext());
+        }
+        db.close();
+
+        return statisticses;
     }
 
 

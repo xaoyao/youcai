@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
+import com.liu.youcai.ActivityCollector;
 import com.liu.youcai.R;
 import com.liu.youcai.adapter.DetailRecyclerViewAdapter;
 import com.liu.youcai.bean.Money;
@@ -31,6 +32,7 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        ActivityCollector.addActivity(this);
 
         initToolbar();
 
@@ -77,6 +79,12 @@ public class DetailActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         updateAllOfEarningAndExpanse();
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
     }
 
     private void initToolbar(){

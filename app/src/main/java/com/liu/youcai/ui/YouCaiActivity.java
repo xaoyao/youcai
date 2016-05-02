@@ -30,10 +30,14 @@ import java.util.List;
 public class YouCaiActivity extends AppCompatActivity {
     private Button btnAdd;
     private DrawerLayout mDrawerLayout;
+
+    private TextView mMonthEarning;
+    private TextView mMonthExpense;
     private TextView todayExpense;
 
     private LinearLayout mToDetail;
     private LinearLayout mTodayToDetail;
+    private LinearLayout mToStatistics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +48,13 @@ public class YouCaiActivity extends AppCompatActivity {
 
         initDrawerLayout();
 
+        mMonthEarning= (TextView) findViewById(R.id.month_earning);
+        mMonthExpense= (TextView) findViewById(R.id.month_expense);
         todayExpense= (TextView) findViewById(R.id.today_expense);
+
         mToDetail= (LinearLayout) findViewById(R.id.to_detail);
         mTodayToDetail= (LinearLayout) findViewById(R.id.today_to_detail);
+        mToStatistics= (LinearLayout) findViewById(R.id.to_statistics);
 
 
         btnAdd= (Button) findViewById(R.id.btn_add);
@@ -69,6 +77,12 @@ public class YouCaiActivity extends AppCompatActivity {
                 startActivity(new Intent(YouCaiActivity.this,DetailActivity.class));
             }
         });
+        mToStatistics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(YouCaiActivity.this,StatisticsActivity.class));
+            }
+        });
 
 
     }
@@ -76,6 +90,7 @@ public class YouCaiActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        updateMonthMoney();
         updateTodayExpense();
     }
 
@@ -110,8 +125,18 @@ public class YouCaiActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                Toast.makeText(YouCaiActivity.this,item.getTitle(),Toast.LENGTH_SHORT).show();
-                mDrawerLayout.closeDrawers();
+                switch (item.getItemId()){
+                    case R.id.setting:
+
+                        startActivity(new Intent(YouCaiActivity.this,UserSettingActivity.class));
+                        mDrawerLayout.closeDrawers();
+                        return true;
+
+                    case R.id.about:
+                        Toast.makeText(YouCaiActivity.this,"优财记账",Toast.LENGTH_SHORT).show();
+                        mDrawerLayout.closeDrawers();
+                        return true;
+                }
                 return true;
             }
         });
@@ -134,6 +159,30 @@ public class YouCaiActivity extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
         }
+    }
+
+
+    /**
+     * 更新显示本月支出和收入
+     */
+    private void updateMonthMoney(){
+        Date date=new Date();
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM");
+        String thisMonth=format.format(date);
+        List<Money> thisMonthMoneys=new MoneyDao(YouCaiActivity.this).findMoneyByTime(thisMonth);
+        double thisMonthEarning=0;
+        double thisMonthExpense=0;
+        for(Money m : thisMonthMoneys){
+            if(m.getMoneyType()==Money.EARNING){
+                thisMonthEarning+=m.getMoney();
+            }else {
+                thisMonthExpense+=m.getMoney();
+            }
+        }
+
+        mMonthEarning.setText(thisMonthEarning+"");
+        mMonthExpense.setText(thisMonthExpense+"");
+
     }
 
     /**
