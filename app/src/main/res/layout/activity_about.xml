@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.liu.youcai.ui.AboutActivity">
+
+    <include layout="@layout/include_toolbar"/>
+
+
+    <TextView
+        android:id="@+id/app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="优财记账"
+        android:textSize="25sp"
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:id="@+id/author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="作者：柳耀"
+        android:layout_below="@id/app_name"
+        android:layout_centerHorizontal="true"
+        android:textSize="15sp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="联系方式：liu5461yao@126.com"
+        android:layout_below="@id/author"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>

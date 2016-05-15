@@ -38,7 +38,10 @@
         <activity
             android:name=".ui.DetailActivity"
             android:parentActivityName=".ui.YouCaiActivity" />
-        <activity android:name=".ui.StatisticsActivity"
+        <activity
+            android:name=".ui.StatisticsActivity"
+            android:parentActivityName=".ui.YouCaiActivity" />
+        <activity android:name=".ui.AboutActivity"
             android:parentActivityName=".ui.YouCaiActivity"></activity>
     </application>
 

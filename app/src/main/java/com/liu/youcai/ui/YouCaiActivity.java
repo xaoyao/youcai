@@ -133,7 +133,8 @@ public class YouCaiActivity extends AppCompatActivity {
                         return true;
 
                     case R.id.about:
-                        Toast.makeText(YouCaiActivity.this,"优财记账",Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(YouCaiActivity.this,"优财记账",Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(YouCaiActivity.this,AboutActivity.class));
                         mDrawerLayout.closeDrawers();
                         return true;
                 }
