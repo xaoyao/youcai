@@ -6,9 +6,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.liu.youcai.MyApplication;
 import com.liu.youcai.bean.Money;
 import com.liu.youcai.bean.Statistics;
 import com.liu.youcai.bean.Type;
+import com.liu.youcai.bean.User;
 import com.liu.youcai.db.YouCaiDatabaseHelper;
 
 import java.util.ArrayList;
@@ -22,9 +24,12 @@ public class MoneyDao {
     private YouCaiDatabaseHelper dbHelper;
     private SQLiteDatabase db;
 
+    private User user;
+
     public MoneyDao(Context context){
         this.context=context;
         dbHelper=new YouCaiDatabaseHelper(context);
+        user=((MyApplication)context.getApplicationContext()).getUser();
     }
 
 
@@ -62,7 +67,7 @@ public class MoneyDao {
 
         db=dbHelper.getWritableDatabase();
 
-        Cursor cursor=db.rawQuery("select * from money order by date desc",new String[]{});
+        Cursor cursor=db.rawQuery("select * from money where user_id=? order by date desc",new String[]{user.getId()+""});
 
         if(cursor.moveToFirst()){
             do{
@@ -98,7 +103,7 @@ public class MoneyDao {
 
         db=dbHelper.getWritableDatabase();
 
-        Cursor cursor=db.rawQuery("select * from money where date like ?",new String[]{datetime+"%"});
+        Cursor cursor=db.rawQuery("select * from money where user_id=? and date like ?",new String[]{user.getId()+"",datetime+"%"});
 
         if(cursor.moveToFirst()){
             do{
@@ -136,7 +141,7 @@ public class MoneyDao {
 
         db=dbHelper.getWritableDatabase();
 
-        Cursor cursor=db.rawQuery("select * from money where money_type=? and date like ?",new String[]{Money.EARNING+"",datetime+"%"});
+        Cursor cursor=db.rawQuery("select * from money where user_id=? and money_type=? and date like ?",new String[]{user.getId()+"",Money.EARNING+"",datetime+"%"});
 
         if(cursor.moveToFirst()){
             do{
@@ -173,7 +178,7 @@ public class MoneyDao {
 
         db=dbHelper.getWritableDatabase();
 
-        Cursor cursor=db.rawQuery("select * from money where money_type=? and date like ?",new String[]{Money.EXPENSE+"",datetime+"%"});
+        Cursor cursor=db.rawQuery("select * from money where user_id=? and money_type=? and date like ?",new String[]{user.getId()+"",Money.EXPENSE+"",datetime+"%"});
 
         if(cursor.moveToFirst()){
             do{
@@ -243,8 +248,8 @@ public class MoneyDao {
     public List<Statistics> statisticsByMonth(int moneyType , String time){
         List<Statistics> statisticses=new ArrayList<>();
         db=dbHelper.getWritableDatabase();
-        Cursor cursor=db.rawQuery("select type_id , sum(money) from money where date like ? and money_type=? group by type_id",
-                new String[]{time+"%",moneyType+""});
+        Cursor cursor=db.rawQuery("select type_id , sum(money) from money where user_id=? and date like ? and money_type=? group by type_id",
+                new String[]{user.getId()+"",time+"%",moneyType+""});
         if(cursor.moveToFirst()){
             do{
                 int typeId=cursor.getInt(cursor.getColumnIndex("type_id"));
